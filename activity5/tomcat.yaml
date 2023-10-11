@@ -27,7 +27,7 @@
         home: "{{ homedir }}"
         create_home: true
         shell: "{{ shell }}"
-    - name: Download tomcat
+    - name: download tomcat
       ansible.builtin.get_url:
         url: "https://dlcdn.apache.org/tomcat/tomcat-{{ tomcat_major_version }}/v{{ VERSION }}/bin/apache-tomcat-{{ tomcat_specific_version }}.tar.gz"
         dest: "/tmp//apache-tomcat-{{ tomcat_specific_version }}.tar.gz"
