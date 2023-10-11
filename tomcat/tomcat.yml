@@ -27,7 +27,7 @@
         src: /tmp/apache-tomcat-10*tar.gz
         dest: /opt/tomcat
         extra_opts:
-        - --strip-components=1
+          - --strip-components=1
   # sudo chown -R tomcat:tomcat /opt/tomcat/ && sudo chmod -R u+x /opt/tomcat/bin
 
     - name: Change file ownership, group and permissions
@@ -64,7 +64,7 @@
     - name: check the status
       ansible.builtin.command: systemctl status tomcat
         register: myoutput
-        
+
   # to print out as a lines 
     - name: debug 
       ansible.builtin.debug: 
