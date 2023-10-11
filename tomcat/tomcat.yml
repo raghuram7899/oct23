@@ -1,0 +1,71 @@
+---
+- name: tomcat10
+  host: all
+  become: yes
+  tasks:
+  # sudo useradd -m -d /opt/tomcat -U -s /bin/false tomcat
+    - name: cerate tomcat user and Directory 
+      ansible.builtin.user:
+        name: tomcat
+        home: /opt/tomcat
+        shell: /bin/false
+        state: present
+  # sudo apt update && sudo apt install default-jdk -y
+    - name: update & install default java
+      ansible.builtin.apt:
+        name: default -jdk
+        state: present
+        update_cache: yes
+
+    - name: Download file from a file path
+      ansible.builtin.get_url:
+        url: https://dlcdn.apache.org/tomcat/tomcat-10/v10.1.14/bin/apache-tomcat-10.1.14.tar.gz
+        dest: /tmp/apache-tomcat-10.1.14.tar.gz
+  # sudo tar xzvf apache-tomcat-10*tar.gz -C /opt/tomcat --strip-components=1
+    - name: Unarchive a file with extra options
+      ansible.builtin.unarchive:
+        src: /tmp/apache-tomcat-10*tar.gz
+        dest: /opt/tomcat
+        extra_opts:
+        - --strip-components=1
+  # sudo chown -R tomcat:tomcat /opt/tomcat/ && sudo chmod -R u+x /opt/tomcat/bin
+
+    - name: Change file ownership, group and permissions
+      ansible.builtin.file:
+        path: /opt/tomcat
+        owner: tomcat
+        group: tomcat
+        recurse: yes
+        
+  # sudo nano /etc/systemd/system/tomcat.service
+    - name: Start service tomcat, if not started
+      ansible.builtin.service:
+        name: tomcat
+        state: started
+
+  # sudo nano /etc/systemd/system/tomcat.service
+    - name: service file
+      ansible.builtin.template:
+        src: tomcat/tomcat.service.j2
+        dest: /etc/systemd/system/tomcat.service
+
+  # sudo systemctl daemon-reload
+    - name: daemon-reload
+      ansible.builtin.systemd:
+        daemon-reload: yes
+
+  #  service module
+    - name: Start service tomcat
+      ansible.builtin.service:
+        name: tomcat
+        state: started
+        enabled: yes
+
+    - name: check the status
+      ansible.builtin.command: systemctl status tomcat
+        register: myoutput
+        
+  # to print out as a lines 
+    - name: debug 
+      ansible.builtin.debug: 
+        var: myoutput.stdout_lines
