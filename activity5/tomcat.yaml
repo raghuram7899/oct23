@@ -17,7 +17,6 @@
         name: "openjdk-{{ java_version }}-jdk"
         update_cache: yes
         state: present
-    - name: Ensure group "somegroup" exists
     - name: Ensure group "tomcat" exists
       ansible.builtin.group:
         name: "{{ groupname }}"
@@ -51,3 +50,10 @@
         owner: "{{ username }}"
         group: "{{ groupname }}"
         state: link
+    - name: Recursively change ownership of a directory
+      ansible.builtin.file:
+        path: "{{ homedir }}"
+        state: directory
+        recurse: yes
+        owner: "{{ username }}"
+        group: "{{ groupname }}"
