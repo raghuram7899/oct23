@@ -62,3 +62,10 @@
     - name: print the value
       ansible.builtin.debug:
         var: shell_files
+    - name: print the value
+      ansible.builtin.debug:
+        var: shell_files
+    - name: print each file
+      ansible.builtin.debug:
+        msg: "{{ item }}"
+      loop: "{{ shell_files.stdout_lines }}"
