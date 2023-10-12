@@ -1,3 +1,4 @@
+@@ -1,22 +1,22 @@
 ---
 - name: install tomcat 10
   become: yes
@@ -17,6 +18,7 @@
         update_cache: yes
         state: present
     - name: Ensure group "somegroup" exists
+    - name: Ensure group "tomcat" exists
       ansible.builtin.group:
         name: "{{ groupname }}"
         state: present
@@ -27,17 +29,25 @@
         home: "{{ homedir }}"
         create_home: true
         shell: "{{ shell }}"
-    - name: download tomcat
-      ansible.builtin.get_url:
-        url: "https://dlcdn.apache.org/tomcat/tomcat-{{ tomcat_major_version }}/v{{ tomcat_specific_version }}/bin/apache-tomcat-{{ tomcat_specific_version }}.tar.gz"
-        dest: "/tmp/apache-tomcat-{{ tomcat_specific_version }}.tar.gz"
-    - name: extract tomcat
+    - name: Create a directory if it does not exist
+      ansible.builtin.file:
+        path: "{{ homedir }}"
+        group: "{{ groupname }}"
+        owner: "{{ username }}"
+        state: directory
+        mode: '0755'
     - name: download and extract tomcat
       ansible.builtin.unarchive:
-        src: "/tmp/apache-tomcat-{{ tomcat_specific_version }}.tar.gz"
-        copy: false
         src: "https://dlcdn.apache.org/tomcat/tomcat-{{ tomcat_major_version }}/v{{ tomcat_specific_version }}/bin/apache-tomcat-{{ tomcat_specific_version }}.tar.gz"
         creates: "{{ homedir }}/apache-tomcat-{{ tomcat_specific_version }}"
         dest: "{{ homedir }}"
         group: "{{ groupname }}"
         owner: "{{ username }}"
+        remote_src: true
+    - name: Create a symbolic link
+      ansible.builtin.file:
+        src: "{{ homedir }}/apache-tomcat-{{ tomcat_specific_version }}"
+        dest: "{{ homedir }}/latest"
+        owner: "{{ username }}"
+        group: "{{ groupname }}"
+        state: link
