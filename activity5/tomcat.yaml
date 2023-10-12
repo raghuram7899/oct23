@@ -27,10 +27,16 @@
         home: "{{ homedir }}"
         create_home: true
         shell: "{{ shell }}"
-    - name: Download tomcat
+    - name: download tomcat
       ansible.builtin.get_url:
-        url: "https://dlcdn.apache.org/tomcat/tomcat-{{ tomcat_major_version }}/v{{ VERSION }}/bin/apache-tomcat-{{ tomcat_specific_version }}.tar.gz"
+        url: "https://dlcdn.apache.org/tomcat/tomcat-{{ tomcat_major_version }}/v{{ tomcat_specific_version }}/bin/apache-tomcat-{{ tomcat_specific_version }}.tar.gz"
         dest: "/tmp//apache-tomcat-{{ tomcat_specific_version }}.tar.gz"
-        
-
-
+    - name: extract tomcat
+      ansible.builtin.unarchive:
+        copy: true
+        create: "{{ homedir }}/apache-tomcat-{{ tomcat_specific_version }}"
+        src: "/tmp//apache-tomcat-{{ tomcat_specific_version }}.tar.gz"
+        dest: "{{ homedir }}"
+        group: "{{ groupname }}"
+        owner: "{{ username }}"
+        remote_src: yes
