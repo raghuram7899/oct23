@@ -29,11 +29,7 @@
         shell: "{{ shell }}"
     - name: download tomcat
       ansible.builtin.get_url:
-<<<<<<< HEAD
         url: "https://dlcdn.apache.org/tomcat/tomcat-{{ tomcat_major_version }}/v{{ tomcat_specific_version }}/bin/apache-tomcat-{{ tomcat_specific_version }}.tar.gz"
-=======
-        url: "https://dlcdn.apache.org/tomcat/tomcat-{{ tomcat_major_version }}/v{{ tomcat_specific_version  }}/bin/apache-tomcat-{{ tomcat_specific_version }}.tar.gz"
->>>>>>> 4f146024f8d5a944756885d40d3400645a825896
         dest: "/tmp//apache-tomcat-{{ tomcat_specific_version }}.tar.gz"
     - name: extract tomcat
       ansible.builtin.unarchive:
