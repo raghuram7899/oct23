@@ -66,6 +66,8 @@
     - name: get all the shell files
       ansible.builtin.command: sudo sh -c 'ls /opt/tomcat/latest/bin/*.sh'
       register: shell_files
+      notify:
+        - restart tomcat  
     - name: print the value
       ansible.builtin.debug:
         var: shell_files
@@ -76,16 +78,23 @@
         group: "{{ groupname }}"
         mode: "0751"
       loop: "{{ shell_files.stdout_lines }}"
-  # which takes input is .j2 file and out put is whatever file which we want
+# which takes input is .j2 file and out put is whatever file which we want
     - name: copy tomcat service file 
       ansible.builtin.template:
         src: templates/tomcat.j2
         dest: "{{ service_file_path }}"
-  # sudo systemctl daemon-reload
+      notify:
+        - restart tomcat  
+# sudo systemctl daemon-reload
     - name: reload daemon, enable and start tomcat
       ansible.builtin.systemd:
+        name: tomcat
+        state: started
+      
+  handlers:
+    - name: restart tomcat
+      nsible.builtin.systemd:
         name: tomcat
         daemon_reload: true
         enabled: true
         state: started
-      
